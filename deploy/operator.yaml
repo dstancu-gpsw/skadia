@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schedia
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: schedia
+  template:
+    metadata:
+      labels:
+        name: schedia
+    spec:
+      serviceAccountName: schedia
+      containers:
+        - name: schedia
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          ports:
+          - containerPort: 60000
+            name: metrics
+          command:
+          - schedia
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "schedia"
